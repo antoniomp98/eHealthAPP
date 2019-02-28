@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.anton.httprequest"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -28,4 +28,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/antpluginlib_3-5-0.jar')
     implementation files('libs/json-simple-1.1.jar')
+    //implementation files('libs/commons-codec-1.11.jar')
+    // implementation files('libs/httpclient-4.5.7.jar')
+    implementation files('libs/google-api-client-1.28.0.jar')
 }

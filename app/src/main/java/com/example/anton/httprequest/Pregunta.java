@@ -1,44 +1,34 @@
 package com.example.anton.httprequest;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.os.CountDownTimer;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.Socket;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
-import org.json.simple.parser.JSONParser;
-
 
 
 public class Pregunta extends AppCompatActivity {
 
-    private static final String TAG = "Reply";
-    private Button botonSI;
-    private Button botonNO;
     TextView emergency_text;
     TextView cuenta_atras;
     TextView id_ambulancia;
-    TextView tiempo_ambulancia;
     String respuestaPHP;
-    private boolean falsa_alarma;
-    private boolean emergencia;
-    JSONParser parser = new JSONParser();
-    Object obj;
-    JSONObject array;
+    JSONObject array; //Json recibido
+    PostJSON emergency;
+    LocationManager locationManager;
+    double latitude;
+    double longitude;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,146 +36,99 @@ public class Pregunta extends AppCompatActivity {
 
         emergency_text = findViewById(R.id.textView2);
         cuenta_atras = findViewById(R.id.textView3);
-        botonSI = findViewById(R.id.button2);
-        botonNO = findViewById(R.id.button3);
+        Button botonSI = findViewById(R.id.button2);
+        Button botonNO = findViewById(R.id.button3);
 
-        emergency_text.setText("¿Está usted bien?");
+        actualizarUbi();
 
-        new CountDownTimer(10000, 1000) {
-
-            @Override
-            public void onTick(long millisUntilFinished) {
-                cuenta_atras.setText("seconds remaining: " + millisUntilFinished / 1000);
-                botonSI.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        falsa_alarma = true;
-                        cancel();
-                        cuenta_atras.setText("Alarma Cancelada");
-                    }
-                });
-                botonNO.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        falsa_alarma = true;
-                        cancel();
-                        onFinish();
-                    }
-                });
-            }
+        botonSI.setOnClickListener(new View.OnClickListener()
+        {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onFinish()
+            public void onClick(View v)
             {
-                cuenta_atras.setText("Enviando señal de emergencia");
-                try {
-                    if(startThreadEmergency() == 1){
-                        cuenta_atras.setText("ERROR AL CONECTAR CON EL SERVIDOR");
-                        return;
-                    }
-                    setContentView(R.layout.respuesta);
-                    id_ambulancia = findViewById(R.id.id_ambulancia);
-                    tiempo_ambulancia = findViewById(R.id.tiempo);
-                    id_ambulancia.setText("Ambulancia: "+ array.get("objectno"));
-                    tiempo_ambulancia.setText("Tiempo para su llegada: "+ array.get("routetime")+" segundos");
+                cuenta_atras.setText("Alarma Cancelada");
 
-
-                } catch (InterruptedException | ParseException e) {
+            }});
+        botonNO.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                try
+                {
+                    onFinish();
+                }
+                catch (InterruptedException e)
+                {
                     e.printStackTrace();
                 }
             }
-        }.start();
-    }
-    public void onDestroy()
-    {
-        super.onDestroy();
+        });
     }
 
-    protected int startThreadEmergency() throws InterruptedException, ParseException {
+            //Se activa al finalizar la cuenta atrás o al pulsar un botón
+            @SuppressLint("SetTextI18n")
+            public void onFinish() throws InterruptedException {
+                cuenta_atras.setText("Enviando señal de emergencia");
+                    if(startRequestEmergency() == 1 ){
+                        cuenta_atras.setText("Todo Correcto");
+                    }
+                    else if(startRequestEmergency() == 2 ) {
+                        cuenta_atras.setText("ERROR AL CONECTAR CON EL SERVIDOR");
+                    }
+                    else if(startRequestEmergency() == 0 ){
+                        cuenta_atras.setText(respuestaPHP);
+                    }
+            }
 
-        ThreadEmergency emergency = new ThreadEmergency();
+    @SuppressWarnings("unchecked")
+    protected int startRequestEmergency() throws InterruptedException {
+        JSONObject json = new JSONObject();
+        json.put("valor", 151); //VALOR QUE MANDAMOS AL SERVIDOR.
+        json.put("latitude", latitude);
+        json.put("longitude", longitude);
+        emergency = new PostJSON(json);
 
         emergency.start();
         emergency.join();
 
-        if(emergency.getResponse().equals("")) return 1;
+        if (emergency.getResponse().equals("todo_correcto")) return 1;
+
+        else if(emergency.getResponse().equals("todo_correcto")) return 2;
 
         respuestaPHP = emergency.getResponse();
 
-        obj = parser.parse(respuestaPHP);
-        array = (JSONObject)obj;
-        Log.d(TAG, "The id is "+ array.get("objectno"));
-
         return 0;
-
     }
 
-    private class ThreadEmergency extends Thread{
+    @SuppressLint("SetTextI18n")
+    protected void actualizarUbi(){
 
-        private String b = "";
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        public void run() {
+        emergency_text.setText("¿Está usted bien?");
 
-            String urlString = "http://163.117.140.34/index.php"; // URL to call
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) Pregunta.this.getSystemService(Context.LOCATION_SERVICE);
 
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-
-                int responseCode = urlConnection.getResponseCode();
-
-
-                String responseMessage = urlConnection.getResponseMessage();
-
-                Log.d(TAG, responseMessage + "         " + responseCode);
-
-                InputStream in = urlConnection.getInputStream();
-                b = getStringFromInputStream(in);
-                Log.d(TAG, b);
-            }catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-        private String getResponse(){
-            return b;
-        }
-    }
-
-
-
-
-    private static String getStringFromInputStream(InputStream is) {
-
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try {
-
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                latitude = location.getLatitude()*10000000;
+                longitude = location.getLongitude()*10000000;
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
 
-        return sb.toString();
+            public void onProviderEnabled(String provider) {}
 
+            public void onProviderDisabled(String provider) {}
+        };
+        ContextCompat.checkSelfPermission(Pregunta.this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        // Register the listener with the Location Manager to receive location updates
+        assert locationManager != null;
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
     }
 }
