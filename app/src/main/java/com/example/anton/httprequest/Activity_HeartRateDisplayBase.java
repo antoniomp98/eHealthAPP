@@ -50,7 +50,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 
     AntPlusHeartRatePcc hrPcc = null;
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
-
+    protected PostJSON postJSON = new PostJSON(this);
    /* TextView tv_status;
 
     TextView tv_estTimestamp;
@@ -84,6 +84,8 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     {
         super.onCreate(savedInstanceState);
 
+        postJSON.actualizarUbi();
+
         handleReset();
     }
 
@@ -103,8 +105,8 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 
     protected void showDataDisplay(String status)
     {
-        setContentView(R.layout.activity_intro);
-        tv_computedHeartRate = (TextView)findViewById(R.id.heartRate);
+        setContentView(R.layout.activity_heart_rate);
+        tv_computedHeartRate = findViewById(R.id.heartRate);
         /*
         tv_status = (TextView)findViewById(R.id.textView_Status);
 
@@ -192,6 +194,14 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     public void run()
                     {
                         tv_computedHeartRate.setText(textHeartRate);
+
+                        if(!textHeartRate.equals("0*")) {
+                            try {
+                                postJSON.startRequestEmergency(Integer.parseInt(textHeartRate));
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
 /*
                         tv_estTimestamp.setText(String.valueOf(estTimestamp));
 
@@ -341,6 +351,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     hrPcc = result;
                     //tv_status.setText(result.getDeviceName() + ": " + initialDeviceState);
                     subscribeToHrEvents();
+
                   //  if(!result.supportsRssi()) tv_rssi.setText("N/A");
                     break;
                 case CHANNEL_NOT_AVAILABLE:
