@@ -1,23 +1,19 @@
 package com.example.anton.httprequest;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 
 public class Intro extends AppCompatActivity {
 
     Button continuar;
+    Button connect;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +43,8 @@ public class Intro extends AppCompatActivity {
             }
 
         }
+
+
     }
 
     protected void onStart() {
@@ -57,13 +55,20 @@ public class Intro extends AppCompatActivity {
         super.onResume();
 
         continuar = findViewById(R.id.continuar);
-
+        connect = findViewById(R.id.connect);
 
         //Al hacer click cambiamos al layout de Pregunta.
         continuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intro.this, Pregunta.class);
+                startActivity(i);
+            }
+        });
+        connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intro.this, Activity_SearchUiHeartRateSampler.class);
                 startActivity(i);
             }
         });

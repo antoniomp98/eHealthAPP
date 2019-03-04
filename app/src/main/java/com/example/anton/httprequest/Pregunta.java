@@ -1,14 +1,12 @@
 package com.example.anton.httprequest;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -125,8 +123,8 @@ public class Pregunta extends AppCompatActivity {
 
             public void onProviderDisabled(String provider) {}
         };
-        ContextCompat.checkSelfPermission(Pregunta.this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
+      //  ContextCompat.checkSelfPermission(Pregunta.this,
+       //         Manifest.permission.ACCESS_FINE_LOCATION);
         // Register the listener with the Location Manager to receive location updates
         assert locationManager != null;
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
