@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Pregunta"></activity>
+        <activity android:name=".Pregunta"/>
         <activity android:name=".Activity_SearchUiHeartRateSampler" />
         <activity android:name=".Activity_MultiDeviceSearchSampler" />
     </application>

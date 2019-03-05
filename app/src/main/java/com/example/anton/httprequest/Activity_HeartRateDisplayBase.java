@@ -48,6 +48,9 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 {
     protected abstract void requestAccessToPcc();
 
+    TextView tv_computedHeartRate;
+    long heartBeatCounter;
+
     AntPlusHeartRatePcc hrPcc = null;
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
     protected PostJSON postJSON = new PostJSON(this);
@@ -57,7 +60,6 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 
     TextView tv_rssi;
 
-    TextView tv_heartBeatCounter;
     TextView tv_heartBeatEventTime;
 
     TextView tv_manufacturerSpecificByte;
@@ -77,7 +79,6 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     TextView tv_dataStatus;
     TextView tv_rrFlag;
 */
-   TextView tv_computedHeartRate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -195,9 +196,10 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     {
                         tv_computedHeartRate.setText(textHeartRate);
 
-                        if(!textHeartRate.equals("0*")) {
+                        if(heartBeatCount != heartBeatCounter){
+                            heartBeatCounter = heartBeatCount;
                             try {
-                                postJSON.startRequestEmergency(Integer.parseInt(textHeartRate));
+                                postJSON.startRequestEmergency(computedHeartRate);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -375,7 +377,10 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                    // tv_status.setText("Error. Do Menu->Reset.");
                     AlertDialog.Builder adlgBldr = new AlertDialog.Builder(Activity_HeartRateDisplayBase.this);
                     adlgBldr.setTitle("Missing Dependency");
-                    adlgBldr.setMessage("The required service\n\"" + AntPlusHeartRatePcc.getMissingDependencyName() + "\"\n was not found. You need to install the ANT+ Plugins service or you may need to update your existing version if you already have it. Do you want to launch the Play Store to get it?");
+                    adlgBldr.setMessage("The required service\n\"" + AntPlusHeartRatePcc.getMissingDependencyName() +
+                            "\"\n was not found. You need to install the ANT+ Plugins service or you " +
+                            "may need to update your existing version if you already have it. Do you want" +
+                            " to launch the Play Store to get it?");
                     adlgBldr.setCancelable(true);
                     adlgBldr.setPositiveButton("Go to Store", new OnClickListener()
                     {

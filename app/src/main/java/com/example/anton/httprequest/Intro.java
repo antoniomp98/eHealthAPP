@@ -31,7 +31,6 @@ public class Intro extends AppCompatActivity {
                 // sees the explanation, try again to request the permission.
 
             } else {
-
                 // No explanation needed, we can request the permission.
 
                 ActivityCompat.requestPermissions(this,

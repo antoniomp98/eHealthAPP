@@ -13,24 +13,14 @@ import android.util.Log;
 
 import org.json.simple.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-public class PostJSON extends Thread{
+class PostJSON {
 
     private Activity_HeartRateDisplayBase heartRateDisplayBase;
-    private String texto = "";
-    private String base64json;
     private double latitude;
     private double longitude;
+    Request request;
 
-    PostJSON(Activity_HeartRateDisplayBase heartRateDisplayBase){
+    PostJSON(Activity_HeartRateDisplayBase heartRateDisplayBase) {
         this.heartRateDisplayBase = heartRateDisplayBase;
     }
 
@@ -41,19 +31,19 @@ public class PostJSON extends Thread{
         json.put("valor", valorHR); //VALOR QUE MANDAMOS AL SERVIDOR.
         json.put("latitude", latitude);
         json.put("longitude", longitude);
+        request = new Request(json);
 
-        String jsonString = json.toString();
-        Base64.Encoder encoder = Base64.getEncoder();
-        base64json = encoder.encodeToString(jsonString.getBytes(StandardCharsets.UTF_8));
+        request.start();
+        request.join();
+        request.interrupt();
 
-        run();
-        join();
-
-        if (texto.equals("todo_correcto")){
-            Log.d("resultado", "Todo correcto");
+        if (request.getResponse().equals("todo_correcto")){
+            Log.d("texto", "todo_correcto");
+        }
+        else{
+            Log.d("texto", "peligro");
         }
 
-        Log.d("resultado", texto);
     }
 
     @SuppressLint("SetTextI18n")
@@ -97,56 +87,6 @@ public class PostJSON extends Thread{
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-    }
-
-    //Convierte el stream de datos a un String
-    private static String getStringFromInputStream(InputStream is) {
-
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        try {
-
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return sb.toString();
-
-    }
-
-    public void run(){
-        try {
-            URL url = new URL("http://163.117.140.34/cercana.php?json="+base64json);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-            int responseCode = urlConnection.getResponseCode();
-
-            String responseMessage = urlConnection.getResponseMessage();
-
-            String TAG = "Reply";
-            Log.d(TAG, responseMessage + "         " + responseCode);
-
-            InputStream in = urlConnection.getInputStream();
-            texto = getStringFromInputStream(in);
-            Log.d(TAG, texto);
-        }catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 }
 
