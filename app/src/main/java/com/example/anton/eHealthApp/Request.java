@@ -1,4 +1,4 @@
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.util.Log;
 
@@ -28,7 +28,7 @@ public class Request extends Thread{
     public void run() {
 
         try {
-            URL url = new URL("http://163.117.140.34/cercana.php?json="+base64json);
+            URL url = new URL("http://163.117.140.34/comprobar.php?json="+base64json);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             int responseCode = urlConnection.getResponseCode();

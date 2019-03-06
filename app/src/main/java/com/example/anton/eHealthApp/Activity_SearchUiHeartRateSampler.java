@@ -7,7 +7,7 @@ Copyright (c) Dynastream Innovations Inc. 2013
 All rights reserved.
 */
 
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.content.Intent;
 import android.os.Bundle;

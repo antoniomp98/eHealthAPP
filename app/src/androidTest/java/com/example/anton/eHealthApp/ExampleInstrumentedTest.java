@@ -1,4 +1,4 @@
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

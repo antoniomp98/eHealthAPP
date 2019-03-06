@@ -1,4 +1,4 @@
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import org.junit.Test;
 

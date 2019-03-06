@@ -1,4 +1,4 @@
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,22 +26,25 @@ class PostJSON {
 
 
     @SuppressWarnings("unchecked")
-    void startRequestEmergency(int valorHR) throws InterruptedException {
+    boolean startRequestEmergency(int valorHR) throws InterruptedException {
         JSONObject json = new JSONObject();
         json.put("valor", valorHR); //VALOR QUE MANDAMOS AL SERVIDOR.
         json.put("latitude", latitude);
         json.put("longitude", longitude);
         request = new Request(json);
-
+        Log.d("latitud", Double.toString(latitude));
+        Log.d("longitud", Double.toString(longitude));
         request.start();
         request.join();
         request.interrupt();
 
         if (request.getResponse().equals("todo_correcto")){
             Log.d("texto", "todo_correcto");
+            return false;
         }
         else{
             Log.d("texto", "peligro");
+            return true;
         }
 
     }

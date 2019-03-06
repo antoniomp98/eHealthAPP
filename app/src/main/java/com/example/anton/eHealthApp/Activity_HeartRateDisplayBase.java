@@ -7,7 +7,7 @@ Copyright (c) Dynastream Innovations Inc. 2013
 All rights reserved.
  */
 
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,6 +50,8 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 
     TextView tv_computedHeartRate;
     long heartBeatCounter;
+    private boolean peligro;
+    Intent i;
 
     AntPlusHeartRatePcc hrPcc = null;
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
@@ -199,9 +201,14 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                         if(heartBeatCount != heartBeatCounter){
                             heartBeatCounter = heartBeatCount;
                             try {
-                                postJSON.startRequestEmergency(computedHeartRate);
+                               peligro = postJSON.startRequestEmergency(computedHeartRate);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                            }
+                            if(peligro && i == null){
+                                i = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
+                                startActivity(i);
+
                             }
                         }
 /*

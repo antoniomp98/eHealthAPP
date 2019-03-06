@@ -1,20 +1,11 @@
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import org.json.simple.JSONObject;
 
 
 public class Pregunta extends AppCompatActivity {

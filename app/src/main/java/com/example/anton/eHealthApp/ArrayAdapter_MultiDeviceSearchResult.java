@@ -7,7 +7,7 @@ Copyright (c) Dynastream Innovations Inc. 2014
 All rights reserved.
  */
 
-package com.example.anton.httprequest;
+package com.example.anton.eHealthApp;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.anton.httprequest.Activity_MultiDeviceSearchSampler.MultiDeviceSearchResultWithRSSI;
+import com.example.anton.eHealthApp.Activity_MultiDeviceSearchSampler.MultiDeviceSearchResultWithRSSI;
 
 import java.util.ArrayList;
 

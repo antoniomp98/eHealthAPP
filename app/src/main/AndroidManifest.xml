@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.anton.httprequest">
+    package="com.example.anton.eHealthApp">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -14,16 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Intro">
+        <activity android:name="com.example.anton.eHealthApp.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Pregunta"/>
-        <activity android:name=".Activity_SearchUiHeartRateSampler" />
-        <activity android:name=".Activity_MultiDeviceSearchSampler" />
+        <activity android:name="com.example.anton.eHealthApp.Pregunta"/>
+        <activity android:name="com.example.anton.eHealthApp.Activity_SearchUiHeartRateSampler" />
+        <activity android:name="com.example.anton.eHealthApp.Activity_MultiDeviceSearchSampler" />
     </application>
 
 </manifest>
