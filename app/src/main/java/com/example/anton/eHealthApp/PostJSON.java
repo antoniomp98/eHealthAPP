@@ -38,13 +38,13 @@ class PostJSON {
         request.join();
         request.interrupt();
 
-        if (request.getResponse().equals("todo_correcto")){
-            Log.d("texto", "todo_correcto");
-            return false;
+        if (request.getConexion()){
+            Log.d("conexion", "conexion correcta");
+            return true;
         }
         else{
-            Log.d("texto", "peligro");
-            return true;
+            Log.d("conexion", "conexion fallida");
+            return false;
         }
 
     }

@@ -11,6 +11,7 @@ package com.example.anton.eHealthApp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +39,11 @@ import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOpe
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
+import com.juang.jplot.PlotPlanitoXY;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
+
 
 /**
  * Base class to connects to Heart Rate Plugin and display all the event data.
@@ -48,10 +52,17 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 {
     protected abstract void requestAccessToPcc();
 
+    PlotPlanitoXY plot;
+    LinearLayout grafica;
     TextView tv_computedHeartRate;
     long heartBeatCounter;
-    private boolean peligro;
-    Intent i;
+    private boolean conexion;
+    private boolean dialog = false;
+    Intent intent;
+    Context context;
+
+    float[] x = new float[100];
+    float[] y = new float[100];
 
     AntPlusHeartRatePcc hrPcc = null;
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
@@ -87,7 +98,12 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        postJSON.actualizarUbi();
+        context = this;
+
+        for(int j = 0; j < 100; j ++){
+            x[j] = j;
+            y[j] = 0;
+        }
 
         handleReset();
     }
@@ -110,6 +126,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     {
         setContentView(R.layout.activity_heart_rate);
         tv_computedHeartRate = findViewById(R.id.heartRate);
+        grafica= findViewById(R.id.grafica);
         /*
         tv_status = (TextView)findViewById(R.id.textView_Status);
 
@@ -181,6 +198,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                 final int computedHeartRate, final long heartBeatCount,
                 final BigDecimal heartBeatEventTime, final DataState dataState)
             {
+
                 // Mark heart rate with asterisk if zero detected
                 final String textHeartRate = String.valueOf(computedHeartRate)
                     + ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
@@ -197,20 +215,45 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     public void run()
                     {
                         tv_computedHeartRate.setText(textHeartRate);
+                        postJSON.actualizarUbi();
 
                         if(heartBeatCount != heartBeatCounter){
                             heartBeatCounter = heartBeatCount;
                             try {
-                               peligro = postJSON.startRequestEmergency(computedHeartRate);
+                               conexion = postJSON.startRequestEmergency(computedHeartRate);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            if(peligro && i == null){
-                                i = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
-                                startActivity(i);
-
+                            if(!conexion && intent == null && !dialog) {
+                                dialog = true;
+                                System.out.println("ERROR");
+                                 AlertDialog.Builder builder =
+                                            new AlertDialog.Builder(Activity_HeartRateDisplayBase.this);
+                                 builder.setMessage("No se ha podido establecer conexión con el servidor")
+                                         .setTitle("CONECTION ERROR")
+                                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                             public void onClick(DialogInterface dialog, int id) {
+                                                 dialog.cancel();
+                                                 intent = new Intent(Activity_HeartRateDisplayBase.this, Intro.class);
+                                                 startActivity(intent);
+                                             }
+                                         });
+                                 AlertDialog alert = builder.create();
+                                 alert.show();
                             }
+
+                                grafica.removeAllViews();
+                                System.arraycopy(y, 1, y, 0, 99);
+                                y[99] = computedHeartRate;//datos
+                                plot = new PlotPlanitoXY(context, "HEART RATE", "x", "valor pulsación");
+                                plot.SetSerie1(x, y, "heartbeat", 0, true);
+                                plot.SetHD(true);
+                                plot.SetTouch(false);
+                                plot.SetEscalaY1(35, 200);
+                                grafica.addView(plot);
+
                         }
+
 /*
                         tv_estTimestamp.setText(String.valueOf(estTimestamp));
 

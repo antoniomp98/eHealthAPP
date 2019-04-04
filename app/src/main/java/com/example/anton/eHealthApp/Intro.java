@@ -12,7 +12,6 @@ import android.widget.Button;
 
 public class Intro extends AppCompatActivity {
 
-    Button continuar;
     Button connect;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,6 @@ public class Intro extends AppCompatActivity {
 
         }
 
-
     }
 
     protected void onStart() {
@@ -52,18 +50,7 @@ public class Intro extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-
-        continuar = findViewById(R.id.continuar);
         connect = findViewById(R.id.connect);
-
-        //Al hacer click cambiamos al layout de Pregunta.
-        continuar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intro.this, Pregunta.class);
-                startActivity(i);
-            }
-        });
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

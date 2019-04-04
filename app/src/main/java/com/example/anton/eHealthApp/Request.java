@@ -16,6 +16,7 @@ import java.util.Base64;
 public class Request extends Thread{
 
     private String texto;
+    private boolean conexion;
     private String base64json;
 
 
@@ -41,13 +42,15 @@ public class Request extends Thread{
             InputStream in = urlConnection.getInputStream();
             texto = getStringFromInputStream(in);
             Log.d(TAG, texto);
+            conexion = true;
         }catch (Exception e) {
+            conexion = false;
             System.out.println(e.getMessage());
         }
     }
 
-    String getResponse(){
-        return texto;
+    boolean getConexion(){
+        return conexion;
     }
 
     //Convierte el stream de datos a un String
