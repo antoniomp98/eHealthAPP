@@ -1,11 +1,18 @@
 package com.example.anton.eHealthApp;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +53,22 @@ public class Intro extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER))
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("La localización debe estar activada para el funcionamiento de esta aplicación")
+                    .setCancelable(false)
+                    .setPositiveButton("ACTIVAR", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     protected void onResume() {
@@ -56,6 +79,7 @@ public class Intro extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(Intro.this, Activity_SearchUiHeartRateSampler.class);
                 startActivity(i);
+                finish();
             }
         });
     }

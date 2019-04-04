@@ -236,6 +236,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                                                  dialog.cancel();
                                                  intent = new Intent(Activity_HeartRateDisplayBase.this, Intro.class);
                                                  startActivity(intent);
+                                                 finish();
                                              }
                                          });
                                  AlertDialog alert = builder.create();
