@@ -16,16 +16,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.anton.eHealthApp.Intro">
+        <activity android:name="com.example.anton.eHealthApp.Intro"
+            android:theme="@style/eHealth">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.anton.eHealthApp.Pregunta"/>
+        <activity android:name="com.example.anton.eHealthApp.Pregunta"
+            android:theme="@style/eHealth" />
         <activity android:name="com.example.anton.eHealthApp.Activity_SearchUiHeartRateSampler" />
         <activity android:name="com.example.anton.eHealthApp.Activity_MultiDeviceSearchSampler" />
+
+
     </application>
 
 </manifest>

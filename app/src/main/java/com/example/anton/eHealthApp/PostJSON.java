@@ -13,6 +13,8 @@ import android.util.Log;
 
 import org.json.simple.JSONObject;
 
+import java.util.Date;
+
 class PostJSON {
 
     private Activity_HeartRateDisplayBase heartRateDisplayBase;
@@ -26,14 +28,16 @@ class PostJSON {
 
 
     @SuppressWarnings("unchecked")
-    boolean startRequestEmergency(int valorHR) throws InterruptedException {
+    boolean startRequestEmergency(int valorHR, Date date) throws InterruptedException {
         JSONObject json = new JSONObject();
         json.put("valor", valorHR); //VALOR QUE MANDAMOS AL SERVIDOR.
         json.put("latitude", latitude);
         json.put("longitude", longitude);
+        json.put("date", date);
         request = new Request(json);
         Log.d("latitud", Double.toString(latitude));
         Log.d("longitud", Double.toString(longitude));
+        Log.d("date", String.valueOf(date));
         request.start();
         request.join();
         request.interrupt();

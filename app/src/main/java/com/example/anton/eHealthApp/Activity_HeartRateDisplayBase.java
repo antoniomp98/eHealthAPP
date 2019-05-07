@@ -42,6 +42,8 @@ import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.juang.jplot.PlotPlanitoXY;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.EnumSet;
 
 
@@ -208,7 +210,6 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
                 final String textHeartBeatEventTime = String.valueOf(heartBeatEventTime)
                     + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
-
                 runOnUiThread(new Runnable()
                 {
                     @Override
@@ -220,7 +221,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                         if(heartBeatCount != heartBeatCounter){
                             heartBeatCounter = heartBeatCount;
                             try {
-                               conexion = postJSON.startRequestEmergency(computedHeartRate);
+                               conexion = postJSON.startRequestEmergency(computedHeartRate, new Date());
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -280,12 +281,11 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                 {
                     @Override
                     public void run()
-                    {/*
-                        tv_estTimestamp.setText(String.valueOf(estTimestamp));
+                    {
 
-                        tv_manufacturerSpecificByte.setText(String.format("0x%02X", manufacturerSpecificByte));
-                        tv_previousHeartBeatEventTime.setText(String.valueOf(previousHeartBeatEventTime));
-                        */
+                        //tv_manufacturerSpecificByte.setText(String.format("0x%02X", manufacturerSpecificByte));
+                        //tv_previousHeartBeatEventTime.setText(String.valueOf(previousHeartBeatEventTime));
+
                     }
                 });
             }
