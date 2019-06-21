@@ -29,7 +29,6 @@
         <activity android:name="com.example.anton.eHealthApp.Activity_SearchUiHeartRateSampler" />
         <activity android:name="com.example.anton.eHealthApp.Activity_MultiDeviceSearchSampler" />
 
-
     </application>
 
 </manifest>

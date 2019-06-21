@@ -16,8 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 public class Intro extends AppCompatActivity {
 
@@ -27,13 +25,14 @@ public class Intro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
+        /*
         FirebaseAnalytics.getInstance(this);
 
-        Log.d("NO", "ASDFASDFASDF");
+       Log.d("NO", "ASDFASDFASDF");
         String token = FirebaseInstanceId.getInstance().getToken();
         Log.i("token",token);
         Log.d("NO", "ASDFASDFASDF");
-
+        */
 
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);

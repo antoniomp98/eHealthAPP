@@ -1,3 +1,11 @@
+/*
+* En esta clase creamos el Json que vamos a mandar al servidor e iniciamos la petición
+* con el mismo.
+* Además también tenemos la función que nos permitirá actualizar la ubicación del
+* dispositivo móvil
+* */
+
+
 package com.example.anton.eHealthApp;
 
 import android.Manifest;
@@ -20,6 +28,7 @@ class PostJSON {
     private Activity_HeartRateDisplayBase heartRateDisplayBase;
     private double latitude;
     private double longitude;
+    private int pid = 0;
     Request request;
 
     PostJSON(Activity_HeartRateDisplayBase heartRateDisplayBase) {
@@ -34,6 +43,7 @@ class PostJSON {
         json.put("latitude", latitude);
         json.put("longitude", longitude);
         json.put("date", date);
+        json.put("pid", pid);
         request = new Request(json);
         Log.d("latitud", Double.toString(latitude));
         Log.d("longitud", Double.toString(longitude));
@@ -44,13 +54,23 @@ class PostJSON {
 
         if (request.getConexion()){
             Log.d("conexion", "conexion correcta");
+            pid = Integer.parseInt(request.getTexto());
             return true;
         }
         else{
             Log.d("conexion", "conexion fallida");
+            pid = 0;
             return false;
         }
 
+    }
+
+    boolean isTimerActive(){
+        return pid != 0;
+    }
+
+    int getPid(){
+        return this.pid;
     }
 
     @SuppressLint("SetTextI18n")

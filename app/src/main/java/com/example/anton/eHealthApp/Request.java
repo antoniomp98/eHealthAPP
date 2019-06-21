@@ -1,3 +1,9 @@
+/*
+Codificamos el Json en base64 para mandarlo en la url
+Después lo que recibimos (el pid del temporizador en el servidor)
+lo almacenamos en la variable texto, si es un 0 el temporizador no está activo.
+* */
+
 package com.example.anton.eHealthApp;
 
 import android.util.Log;
@@ -29,13 +35,15 @@ public class Request extends Thread{
     public void run() {
 
         try {
-            URL url = new URL("http://163.117.140.34/comprobar.php?json="+base64json);
+            Log.d("NO", "HOLA");
+            URL url = new URL("http://192.168.3.141/comprobar.php?json="+base64json);
+            Log.d("NO", "HOLA 2");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             int responseCode = urlConnection.getResponseCode();
-
+            Log.d("NO", "HOLA 3");
             String responseMessage = urlConnection.getResponseMessage();
-
+            Log.d("NO", "HOLA 4");
             String TAG = "Reply";
             Log.d(TAG, responseMessage + "         " + responseCode);
 
@@ -47,6 +55,11 @@ public class Request extends Thread{
             conexion = false;
             System.out.println(e.getMessage());
         }
+        Log.d("NO", "HOLA 5");
+    }
+
+    String getTexto(){
+        return this.texto;
     }
 
     boolean getConexion(){

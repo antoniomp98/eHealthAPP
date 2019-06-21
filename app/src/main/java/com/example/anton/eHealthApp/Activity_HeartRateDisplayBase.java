@@ -243,6 +243,12 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                                  AlertDialog alert = builder.create();
                                  alert.show();
                             }
+                            if(conexion && intent == null && postJSON.isTimerActive()){
+                                intent = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
+                                intent.putExtra("pid", postJSON.getPid());
+                                startActivity(intent);
+                                finish();
+                            }
 
                                 grafica.removeAllViews();
                                 System.arraycopy(y, 1, y, 0, 99);
