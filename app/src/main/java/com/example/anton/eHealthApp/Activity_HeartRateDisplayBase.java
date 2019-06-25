@@ -9,6 +9,7 @@ All rights reserved.
 
 package com.example.anton.eHealthApp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -42,6 +43,8 @@ import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.juang.jplot.PlotPlanitoXY;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
@@ -61,6 +64,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     private boolean conexion;
     private boolean dialog = false;
     Intent intent;
+    boolean noSigas = false;
     Context context;
 
     float[] x = new float[100];
@@ -218,10 +222,16 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                         tv_computedHeartRate.setText(textHeartRate);
                         postJSON.actualizarUbi();
 
-                        if(heartBeatCount != heartBeatCounter){
+                        if(heartBeatCount != heartBeatCounter && !noSigas){
                             heartBeatCounter = heartBeatCount;
                             try {
-                               conexion = postJSON.startRequestEmergency(computedHeartRate, new Date());
+                                Date date = Calendar.getInstance().getTime();
+                                @SuppressLint("SimpleDateFormat")
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                String strDate = dateFormat.format(date);
+                                long ms = date.getTime();
+                               conexion = postJSON.startRequestEmergency(computedHeartRate, ms);
+                               if (postJSON.isTimerActive()) noSigas = true;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -247,6 +257,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                                 intent = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
                                 intent.putExtra("pid", postJSON.getPid());
                                 startActivity(intent);
+
                                 finish();
                             }
 

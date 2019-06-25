@@ -1,6 +1,7 @@
 package com.example.anton.eHealthApp;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ public class Pregunta extends AppCompatActivity {
     TextView id_ambulancia;
     boolean conexion;
     int pid;
+    int option=0;
 
 
     @SuppressLint("SetTextI18n")
@@ -30,7 +32,7 @@ public class Pregunta extends AppCompatActivity {
         setContentView(R.layout.activity_pregunta);
 
         pid = getIntent().getIntExtra("pid", 0);
-
+        Log.d("pid", String.valueOf(pid));
         emergency_text = findViewById(R.id.textView2);
         cuenta_atras = findViewById(R.id.textView3);
         Button botonSI = findViewById(R.id.button2);
@@ -38,7 +40,7 @@ public class Pregunta extends AppCompatActivity {
 
         emergency_text.setText("¿Está usted bien?");
 
-        final CountDownTimer contador = new CountDownTimer(100000, 1000) {
+        final CountDownTimer contador = new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 cuenta_atras.setText("seconds remaining: " + millisUntilFinished / 1000);
@@ -46,7 +48,7 @@ public class Pregunta extends AppCompatActivity {
 
             public void onFinish() {
                 cuenta_atras.setText("Emergency");
-                finish();
+                fin();
             }
         }.start();
 
@@ -57,6 +59,7 @@ public class Pregunta extends AppCompatActivity {
             public void onClick(View v) {
                 contador.cancel();
                 cuenta_atras.setText("Alarma Cancelada");
+                option = 0;
                 PararTimer pararTimer = new PararTimer();
                 pararTimer.start();
                 try {
@@ -65,7 +68,7 @@ public class Pregunta extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 pararTimer.interrupt();
-                finish();
+                fin();
             }
         });
         botonNO.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +76,7 @@ public class Pregunta extends AppCompatActivity {
             public void onClick(View v) {
                 contador.cancel();
                 cuenta_atras.setText("Emergency");
+                option = 1;
                 PararTimer pararTimer = new PararTimer();
                 pararTimer.start();
                 try {
@@ -81,16 +85,23 @@ public class Pregunta extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 pararTimer.interrupt();
-                finish();
+                fin();
             }
         });
+    }
+
+    private void fin(){
+        Intent i = new Intent(Pregunta.this, Activity_SearchUiHeartRateSampler.class);
+        startActivity(i);
+        finish();
+        finish();
     }
 
     public class PararTimer extends Thread{
         public void run() {
             try {
                 String pidString = Integer.toString(pid);
-                URL url = new URL("http://192.168.3.141/pararTimer.php?pid="+pidString);
+                URL url = new URL("http://192.168.3.141/pararTimer.php?pid="+pidString+"&option="+option);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
                 int responseCode = urlConnection.getResponseCode();

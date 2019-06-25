@@ -37,14 +37,14 @@ class PostJSON {
 
 
     @SuppressWarnings("unchecked")
-    boolean startRequestEmergency(int valorHR, Date date) throws InterruptedException {
+    boolean startRequestEmergency(int valorHR, long date) throws InterruptedException {
         JSONObject json = new JSONObject();
         json.put("valor", valorHR); //VALOR QUE MANDAMOS AL SERVIDOR.
         json.put("latitude", latitude);
         json.put("longitude", longitude);
         json.put("date", date);
-        json.put("pid", pid);
         request = new Request(json);
+        Log.d("heart", Double.toString(valorHR));
         Log.d("latitud", Double.toString(latitude));
         Log.d("longitud", Double.toString(longitude));
         Log.d("date", String.valueOf(date));
@@ -66,6 +66,7 @@ class PostJSON {
     }
 
     boolean isTimerActive(){
+        Log.d("Timer", "Activo");
         return pid != 0;
     }
 
