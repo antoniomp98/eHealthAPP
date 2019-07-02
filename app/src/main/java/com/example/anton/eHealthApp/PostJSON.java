@@ -21,8 +21,6 @@ import android.util.Log;
 
 import org.json.simple.JSONObject;
 
-import java.util.Date;
-
 class PostJSON {
 
     private Activity_HeartRateDisplayBase heartRateDisplayBase;
@@ -66,12 +64,18 @@ class PostJSON {
     }
 
     boolean isTimerActive(){
-        Log.d("Timer", "Activo");
+        Log.d("pid", String.valueOf(pid));
         return pid != 0;
     }
 
     int getPid(){
         return this.pid;
+    }
+    double getLatitude(){
+        return this.latitude;
+    }
+    double getLongitude(){
+        return this.longitude;
     }
 
     @SuppressLint("SetTextI18n")
@@ -85,8 +89,8 @@ class PostJSON {
         // Define a listener that responds to location updates
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                latitude = location.getLatitude() * 10000000;
-                longitude = location.getLongitude() * 10000000;
+                latitude = Math.round(location.getLatitude() * 1000000);
+                longitude = Math.round(location.getLongitude() * 1000000);
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {

@@ -9,7 +9,6 @@ All rights reserved.
 
 package com.example.anton.eHealthApp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -43,8 +42,6 @@ import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
 import com.juang.jplot.PlotPlanitoXY;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
@@ -66,6 +63,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     Intent intent;
     boolean noSigas = false;
     Context context;
+    Boolean zerosent=false;
 
     float[] x = new float[100];
     float[] y = new float[100];
@@ -206,8 +204,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
             {
 
                 // Mark heart rate with asterisk if zero detected
-                final String textHeartRate = String.valueOf(computedHeartRate)
-                    + ((DataState.ZERO_DETECTED.equals(dataState)) ? "*" : "");
+                final String textHeartRate = ((DataState.ZERO_DETECTED.equals(dataState)) ? "0" : String.valueOf(computedHeartRate));
 
                 // Mark heart beat count and heart beat event time with asterisk if initial value
                 final String textHeartBeatCount = String.valueOf(heartBeatCount)
@@ -222,15 +219,17 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                         tv_computedHeartRate.setText(textHeartRate);
                         postJSON.actualizarUbi();
 
-                        if(heartBeatCount != heartBeatCounter && !noSigas){
+                        if((heartBeatCount != heartBeatCounter && !noSigas) ||(DataState.ZERO_DETECTED.equals(dataState)&& !zerosent) ){
                             heartBeatCounter = heartBeatCount;
                             try {
                                 Date date = Calendar.getInstance().getTime();
-                                @SuppressLint("SimpleDateFormat")
-                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                String strDate = dateFormat.format(date);
                                 long ms = date.getTime();
-                               conexion = postJSON.startRequestEmergency(computedHeartRate, ms);
+                                if(DataState.ZERO_DETECTED.equals(dataState)) {
+                                    conexion = postJSON.startRequestEmergency(0, ms);
+                                    zerosent=true;
+                                }
+                                else
+                                    conexion = postJSON.startRequestEmergency(computedHeartRate, ms);
                                if (postJSON.isTimerActive()) noSigas = true;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -256,6 +255,8 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                             if(conexion && intent == null && postJSON.isTimerActive()){
                                 intent = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
                                 intent.putExtra("pid", postJSON.getPid());
+                                intent.putExtra("latitude", postJSON.getLatitude());
+                                intent.putExtra("longitude", postJSON.getLongitude());
                                 startActivity(intent);
 
                                 finish();

@@ -45,7 +45,6 @@ public class Request extends Thread{
 
             InputStream in = urlConnection.getInputStream();
             texto = getStringFromInputStream(in);
-            Log.d(TAG, base64json);
             Log.d(TAG, texto);
             conexion = true;
         }catch (Exception e) {
