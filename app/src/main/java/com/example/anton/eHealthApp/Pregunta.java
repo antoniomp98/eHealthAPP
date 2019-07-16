@@ -52,7 +52,7 @@ public class Pregunta extends AppCompatActivity {
         Button botonSI = findViewById(R.id.button2);
         Button botonNO = findViewById(R.id.button3);
 
-        emergency_text.setText("¿Está usted bien?");
+        emergency_text.setText("Are you OK?");
 /*
         LocationManager locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
