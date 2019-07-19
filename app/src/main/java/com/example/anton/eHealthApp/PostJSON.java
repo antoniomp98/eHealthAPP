@@ -23,15 +23,10 @@ import org.json.simple.JSONObject;
 
 class PostJSON {
 
-    private Activity_HeartRateDisplayBase heartRateDisplayBase;
     private double latitude;
     private double longitude;
     private int pid = 0;
     Request request;
-
-    PostJSON(Activity_HeartRateDisplayBase heartRateDisplayBase) {
-        this.heartRateDisplayBase = heartRateDisplayBase;
-    }
 
 
     @SuppressWarnings("unchecked")
@@ -79,7 +74,7 @@ class PostJSON {
     }
 
     @SuppressLint("SetTextI18n")
-    void actualizarUbi() {
+    void actualizarUbi(Activity_HeartRateDisplayBase heartRateDisplayBase) {
 
         //LocationManager locationManager1 = (LocationManager) heartRateDisplayBase.getSystemService(Context.LOCATION_SERVICE);
 

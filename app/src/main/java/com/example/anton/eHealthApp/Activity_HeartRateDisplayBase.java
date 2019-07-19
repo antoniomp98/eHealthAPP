@@ -70,7 +70,10 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 
     AntPlusHeartRatePcc hrPcc = null;
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
-    protected PostJSON postJSON = new PostJSON(this);
+    protected PostJSON postJSON = new PostJSON();
+
+    Activity_HeartRateDisplayBase heartRateDisplayBase = this;
+
    /* TextView tv_status;
 
     TextView tv_estTimestamp;
@@ -217,7 +220,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                     public void run()
                     {
                         tv_computedHeartRate.setText(textHeartRate);
-                        postJSON.actualizarUbi();
+                        postJSON.actualizarUbi(heartRateDisplayBase);
 
                         if((heartBeatCount != heartBeatCounter && !noSigas) ||(DataState.ZERO_DETECTED.equals(dataState)&& !zerosent) ){
                             heartBeatCounter = heartBeatCount;
