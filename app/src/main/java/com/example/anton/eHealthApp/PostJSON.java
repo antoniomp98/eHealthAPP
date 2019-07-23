@@ -76,8 +76,6 @@ class PostJSON {
     @SuppressLint("SetTextI18n")
     void actualizarUbi(Activity_HeartRateDisplayBase heartRateDisplayBase) {
 
-        //LocationManager locationManager1 = (LocationManager) heartRateDisplayBase.getSystemService(Context.LOCATION_SERVICE);
-
         // Acquire a reference to the system Location Manager
         LocationManager locationManager = (LocationManager) heartRateDisplayBase.getSystemService(Context.LOCATION_SERVICE);
 

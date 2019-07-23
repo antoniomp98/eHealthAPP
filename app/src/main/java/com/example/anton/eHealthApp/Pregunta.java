@@ -3,13 +3,16 @@ package com.example.anton.eHealthApp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +32,6 @@ public class Pregunta extends AppCompatActivity {
 
     TextView emergency_text;
     TextView cuenta_atras;
-    TextView id_ambulancia;
     boolean conexion;
     int pid;
     int option = 0;
@@ -121,9 +123,23 @@ public class Pregunta extends AppCompatActivity {
     }
 
     private void fin() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER))
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("La localización debe estar activada para el funcionamiento de esta aplicación")
+                    .setCancelable(false)
+                    .setPositiveButton("ACTIVAR", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
         Intent i = new Intent(Pregunta.this, Activity_SearchUiHeartRateSampler.class);
         startActivity(i);
-        finish();
         finish();
     }
 
@@ -132,6 +148,8 @@ public class Pregunta extends AppCompatActivity {
             try {
                 String pidString = Integer.toString(pid);
                 Log.d("option", String.valueOf(option));
+                Log.d("latitude", String.valueOf(latitude));
+                Log.d("longitude", String.valueOf(longitude));
                 URL url = new URL("http://192.168.3.141/pararTimer.php?pid="+pidString+
                         "&option="+option+"&latitude="+latitude+"&longitude="+longitude);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

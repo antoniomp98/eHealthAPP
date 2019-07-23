@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -261,7 +262,6 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                                 intent.putExtra("latitude", postJSON.getLatitude());
                                 intent.putExtra("longitude", postJSON.getLongitude());
                                 startActivity(intent);
-
                                 finish();
                             }
 
