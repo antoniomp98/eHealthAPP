@@ -1,19 +1,10 @@
 package com.example.anton.eHealthApp;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class Pregunta extends AppCompatActivity {
+public class Pregunta extends Activity {
 
     TextView emergency_text;
     TextView cuenta_atras;
@@ -123,7 +114,7 @@ public class Pregunta extends AppCompatActivity {
     }
 
     private void fin() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+ /*       LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER))
         {
@@ -137,7 +128,7 @@ public class Pregunta extends AppCompatActivity {
                     });
             AlertDialog alert = builder.create();
             alert.show();
-        }
+        }*/
         Intent i = new Intent(Pregunta.this, Activity_SearchUiHeartRateSampler.class);
         startActivity(i);
         finish();
@@ -150,7 +141,7 @@ public class Pregunta extends AppCompatActivity {
                 Log.d("option", String.valueOf(option));
                 Log.d("latitude", String.valueOf(latitude));
                 Log.d("longitude", String.valueOf(longitude));
-                URL url = new URL("http://192.168.3.141/pararTimer.php?pid="+pidString+
+                URL url = new URL("http://163.117.166.81/pararTimer.php?pid="+pidString+
                         "&option="+option+"&latitude="+latitude+"&longitude="+longitude);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
