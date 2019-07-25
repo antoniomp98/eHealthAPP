@@ -23,7 +23,7 @@ public class Activity_SearchUiHeartRateSampler extends Activity_HeartRateDisplay
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        showDataDisplay("Connecting...");
+        showDataDisplay();
         super.onCreate(savedInstanceState);
     }
 

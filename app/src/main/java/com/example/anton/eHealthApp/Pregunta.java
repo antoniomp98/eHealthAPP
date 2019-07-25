@@ -1,7 +1,6 @@
 package com.example.anton.eHealthApp;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -10,7 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-//import java.io.InputStream;
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class Pregunta extends Activity {
+public class Pregunta extends AppCompatActivity {
 
     TextView emergency_text;
     TextView cuenta_atras;
@@ -46,23 +46,7 @@ public class Pregunta extends Activity {
         Button botonNO = findViewById(R.id.button3);
 
         emergency_text.setText("Are you OK?");
-/*
-        LocationManager locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        assert locMan != null;
-        Location location = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        latitude = location.getLatitude() * 10000000;
-        longitude = location.getLongitude() * 10000000;
-*/
+
         final CountDownTimer contador = new CountDownTimer(10000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -114,21 +98,6 @@ public class Pregunta extends Activity {
     }
 
     private void fin() {
- /*       LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER))
-        {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("La localización debe estar activada para el funcionamiento de esta aplicación")
-                    .setCancelable(false)
-                    .setPositiveButton("ACTIVAR", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }*/
         Intent i = new Intent(Pregunta.this, Activity_SearchUiHeartRateSampler.class);
         startActivity(i);
         finish();

@@ -9,20 +9,23 @@ All rights reserved.
 
 package com.example.anton.eHealthApp;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc;
 import com.dsi.ant.plugins.antplus.pcc.AntPlusHeartRatePcc.DataState;
@@ -40,6 +43,9 @@ import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.ICumulativeOpe
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IManufacturerAndSerialReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.AntPlusLegacyCommonPcc.IVersionAndModelReceiver;
 import com.dsi.ant.plugins.antplus.pccbase.PccReleaseHandle;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.juang.jplot.PlotPlanitoXY;
 
 import java.math.BigDecimal;
@@ -51,8 +57,7 @@ import java.util.EnumSet;
 /**
  * Base class to connects to Heart Rate Plugin and display all the event data.
  */
-public abstract class Activity_HeartRateDisplayBase extends Activity
-{
+public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
     protected abstract void requestAccessToPcc();
 
     PlotPlanitoXY plot;
@@ -64,7 +69,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     Intent intent;
     boolean noSigas = false;
     Context context;
-    Boolean zerosent=false;
+    Boolean zerosent = false;
 
     float[] x = new float[100];
     float[] y = new float[100];
@@ -73,7 +78,9 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
     protected PostJSON postJSON = new PostJSON();
 
-    Activity_HeartRateDisplayBase heartRateDisplayBase = this;
+    double latitude;
+    double longitude;
+
 
    /* TextView tv_status;
 
@@ -102,19 +109,48 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
 */
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            latitude = Math.round(location.getLatitude() * 1000000);
+                            longitude = Math.round(location.getLongitude() * 1000000);
+                        }
+                    }
+                });
 
         context = this;
 
-        for(int j = 0; j < 100; j ++){
+        for (int j = 0; j < 100; j++) {
             x[j] = j;
             y[j] = 0;
         }
 
         handleReset();
     }
+
+    protected void onStart() {
+        super.onStart();
+    }
+
+
 
     /**
      * Resets the PCC connection to request access again and clears any existing display data.
@@ -130,7 +166,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
         requestAccessToPcc();
     }
 
-    protected void showDataDisplay(String status)
+    protected void showDataDisplay()
     {
         setContentView(R.layout.activity_heart_rate);
         tv_computedHeartRate = findViewById(R.id.heartRate);
@@ -211,17 +247,16 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                 final String textHeartRate = ((DataState.ZERO_DETECTED.equals(dataState)) ? "0" : String.valueOf(computedHeartRate));
 
                 // Mark heart beat count and heart beat event time with asterisk if initial value
-                final String textHeartBeatCount = String.valueOf(heartBeatCount)
+                /*final String textHeartBeatCount = String.valueOf(heartBeatCount)
                     + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
                 final String textHeartBeatEventTime = String.valueOf(heartBeatEventTime)
-                    + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");
+                    + ((DataState.INITIAL_VALUE.equals(dataState)) ? "*" : "");*/
                 runOnUiThread(new Runnable()
                 {
                     @Override
                     public void run()
                     {
                         tv_computedHeartRate.setText(textHeartRate);
-                        postJSON.actualizarUbi(heartRateDisplayBase);
 
                         if((heartBeatCount != heartBeatCounter && !noSigas) ||(DataState.ZERO_DETECTED.equals(dataState)&& !zerosent) ){
                             heartBeatCounter = heartBeatCount;
@@ -229,11 +264,11 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                                 Date date = Calendar.getInstance().getTime();
                                 long ms = date.getTime();
                                 if(DataState.ZERO_DETECTED.equals(dataState)) {
-                                    conexion = postJSON.startRequestEmergency(0, ms);
+                                    conexion = postJSON.startRequestEmergency(0, ms, latitude, longitude);
                                     zerosent=true;
                                 }
                                 else
-                                    conexion = postJSON.startRequestEmergency(computedHeartRate, ms);
+                                    conexion = postJSON.startRequestEmergency(computedHeartRate, ms, latitude, longitude);
                                if (postJSON.isTimerActive()) noSigas = true;
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
@@ -259,8 +294,8 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                             if(conexion && intent == null && postJSON.isTimerActive()){
                                 intent = new Intent(Activity_HeartRateDisplayBase.this, Pregunta.class);
                                 intent.putExtra("pid", postJSON.getPid());
-                                intent.putExtra("latitude", postJSON.getLatitude());
-                                intent.putExtra("longitude", postJSON.getLongitude());
+                                intent.putExtra("latitude", latitude);
+                                intent.putExtra("longitude", longitude);
                                 startActivity(intent);
                                 finish();
                             }
@@ -418,7 +453,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
         public void onResultReceived(AntPlusHeartRatePcc result, RequestAccessResult resultCode,
             DeviceState initialDeviceState)
         {
-            showDataDisplay("Connecting...");
+            showDataDisplay();
             switch(resultCode)
             {
                 case SUCCESS:
@@ -459,7 +494,7 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                         @Override
                         public void onClick(DialogInterface dialog, int which)
                         {
-                            Intent startStore = null;
+                            Intent startStore;
                             startStore = new Intent(Intent.ACTION_VIEW,Uri.parse("market://details?id=" + AntPlusHeartRatePcc.getMissingDependencyPackageName()));
                             startStore.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -523,28 +558,5 @@ public abstract class Activity_HeartRateDisplayBase extends Activity
                 releaseHandle.close();
             }
             super.onDestroy();
-        }
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu)
-        {
-            // Inflate the menu; this adds items to the action bar if it is present.
-           // getMenuInflater().inflate(R.menu.activity_heart_rate, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item)
-        {
-            //switch(item.getItemId())
-            //{
-              // case R.id.menu_reset:
-               //     handleReset();
-               //     tv_status.setText("Resetting...");
-               //     return true;
-            //    default:
-                    return super.onOptionsItemSelected(item);
-            //}
-
         }
 }
