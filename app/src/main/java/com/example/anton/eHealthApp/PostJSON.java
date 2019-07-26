@@ -19,7 +19,7 @@ class PostJSON {
 
 
     @SuppressWarnings("unchecked")
-    boolean startRequestEmergency(int valorHR, long date, double latitude, double longitude) throws InterruptedException {
+    boolean startRequestEmergency(int valorHR, long date, int latitude, int longitude) throws InterruptedException {
         JSONObject json = new JSONObject();
         json.put("valor", valorHR); //VALOR QUE MANDAMOS AL SERVIDOR.
         json.put("latitude", latitude);

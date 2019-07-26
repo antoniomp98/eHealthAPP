@@ -26,8 +26,8 @@ public class Pregunta extends AppCompatActivity {
     boolean conexion;
     int pid;
     int option = 0;
-    double latitude = 0;
-    double longitude = 0;
+    int latitude = 0;
+    int longitude = 0;
 
 
     @SuppressLint("SetTextI18n")
@@ -37,8 +37,8 @@ public class Pregunta extends AppCompatActivity {
         setContentView(R.layout.activity_pregunta);
 
         pid = getIntent().getIntExtra("pid", 0);
-        latitude = getIntent().getDoubleExtra("latitude", 0);
-        longitude = getIntent().getDoubleExtra("longitude", 0);
+        latitude = getIntent().getIntExtra("latitude", 0);
+        longitude = getIntent().getIntExtra("longitude", 0);
         Log.d("pid", String.valueOf(pid));
         emergency_text = findViewById(R.id.textView2);
         cuenta_atras = findViewById(R.id.textView3);

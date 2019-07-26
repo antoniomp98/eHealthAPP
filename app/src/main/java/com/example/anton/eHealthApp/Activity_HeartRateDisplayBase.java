@@ -68,7 +68,7 @@ public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
     Intent intent;
     boolean noSigas = false;
     Context context;
-    Boolean zerosent = false;
+    boolean zerosent = false;
 
     float[] x = new float[100];
     float[] y = new float[100];
@@ -77,8 +77,8 @@ public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
     protected PccReleaseHandle<AntPlusHeartRatePcc> releaseHandle = null;
     protected PostJSON postJSON = new PostJSON();
 
-    double latitude;
-    double longitude;
+    int latitude;
+    int longitude;
 
 
    /* TextView tv_status;
@@ -129,8 +129,8 @@ public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            latitude = Math.round(location.getLatitude() * 1000000);
-                            longitude = Math.round(location.getLongitude() * 1000000);
+                            latitude = (int) Math.round(location.getLatitude() * 1000000);
+                            longitude = (int) Math.round(location.getLongitude() * 1000000);
                         }
                     }
                 });
@@ -144,11 +144,6 @@ public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
 
         handleReset();
     }
-
-    protected void onStart() {
-        super.onStart();
-    }
-
 
 
     /**
@@ -257,7 +252,8 @@ public abstract class Activity_HeartRateDisplayBase extends AppCompatActivity {
                     {
                         tv_computedHeartRate.setText(textHeartRate);
 
-                        if((heartBeatCount != heartBeatCounter && !noSigas) ||(DataState.ZERO_DETECTED.equals(dataState)&& !zerosent) ){
+                        if(((heartBeatCount != heartBeatCounter && !noSigas) ||(DataState.ZERO_DETECTED.equals(dataState)&& !zerosent)) &&
+                                !(heartBeatCount == 1 && (DataState.ZERO_DETECTED.equals(dataState)))){
                             heartBeatCounter = heartBeatCount;
                             try {
                                 Date date = Calendar.getInstance().getTime();
